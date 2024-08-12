@@ -1,10 +1,13 @@
+import React from "react";
+import Login from "./components/security/Login";
+import { ThemeProvider } from "@material-ui/core";
+import theme from "./theme/theme";
+
 function App() {
   return (
-   <div className="App">
-      <header className="App-header">
-          <span>Test Code</span>
-      </header>
-   </div>
+    <ThemeProvider theme={theme}>
+      <Login />
+    </ThemeProvider>
   );
 }
 
