@@ -25,6 +25,29 @@ const useStyles = makeStyles({
     },
     link:{
         marginTop:8
+    },
+    appBar:{
+        paddingTop: 8,
+        paddingBottom: 8
+    },
+    grow:{
+        flexGrow: 1
+    },
+    linkAppBarLogo:{
+        display: 'inline-flex',
+        alignItems: 'center'
+    },
+    mr:{
+        marginRight: 3
+    },
+    buttonIcon:{
+        fontSize: 14,
+        padding: 0
+    },
+    linkAppBarDesktop:{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: "6px 16px"
     }
 });
 
