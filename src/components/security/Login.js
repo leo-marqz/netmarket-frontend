@@ -1,5 +1,6 @@
-import { Avatar, Button, Card, Container, Grid, Icon, Link, TextField, Typography } from '@material-ui/core'
+import { Avatar, Button, Card, Container, Grid, Icon, TextField, Typography } from '@material-ui/core'
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 import useStyles from '../../theme/useStyles';
 
@@ -29,7 +30,7 @@ export default function Login() {
                                 </Button>
                             </Grid>
                         </Grid>
-                        <Link href='/' variant='body1'  className={classes.link} >
+                        <Link to='/register' variant='body1'  className={classes.link} >
                             No tienes una cuenta? Registrate
                         </Link>
                     </form>

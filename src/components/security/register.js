@@ -1,7 +1,8 @@
 
-import { Avatar, Container, Card, Grid, Icon, Typography, TextField, Button, Link } from "@material-ui/core";
+import { Avatar, Container, Card, Grid, Icon, Typography, TextField, Button } from "@material-ui/core";
 import React from "react";
 import useStyles from "../../theme/useStyles";
+import { Link } from 'react-router-dom';
 
 const Register = () => {
     const classes = useStyles();
@@ -34,7 +35,7 @@ const Register = () => {
                                 <Button variant="contained" fullWidth color="primary">Registrar</Button>
                             </Grid>
                         </Grid>
-                        <Link href='/' variant='body1'  className={classes.link} >
+                        <Link to='/login' variant='body1'  className={classes.link} >
                             Tienes una cuenta? Iniciar Sesion
                         </Link>
                     </form>
