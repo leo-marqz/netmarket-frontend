@@ -1,19 +1,31 @@
 import React, { useState } from 'react'
 import useStyles from '../../theme/useStyles'
-import { Button, Card, Container, Grid, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
+import { Button, Card, Container, Dialog, DialogContent, DialogTitle, Grid, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
 
-const CleanBook = {
+const cleanBook = {
     category: '',
     title: '',
     author: ''
 }
 
+const cleanBookEdit = {
+    categoryEdit: '',
+    titleEdit: '',
+    authorEdit: ''
+}
+
 export default function Book() {
     const classes = useStyles();
+    const [open, setOpen] = useState(false);
     const [book, setBook] = useState({
         category: '',
         title: '',
         author: ''
+    });
+    const [bookEdit, setBookEdit] = useState({
+        categoryEdit: '',
+        titleEdit: '',
+        authorEdit: ''
     });
 
     const handleChange = (e) => {
@@ -24,14 +36,35 @@ export default function Book() {
         }));
     }
 
+    const handleChangeEdit = (e) => {
+        const {name, value} = e.target;
+        setBookEdit((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
     const saveBook = (e) => {
         e.preventDefault();
         console.log('Guardando libro', book);
-        setBook(CleanBook);
+        setBook(cleanBook);
+    }
+
+    const editBook = (e)=>{
+        e.preventDefault();
+        console.log('Editando libro', bookEdit);
+        setBookEdit(cleanBookEdit);
+        closeDialog();
     }
 
     const openDialog = () => {
         console.log('Abriendo dialogo');
+        setOpen(true);
+    }
+
+    const closeDialog = () => {
+        console.log('Cerrando dialogo');
+        setOpen(false);
     }
 
     const deleteBook = () => {
@@ -40,7 +73,7 @@ export default function Book() {
 
   return (
     <Container className={classes.container}>
-        <Grid container justify='center'>
+        <Grid container justifyContent='center'>
             <Grid item lg={7} md={8}>
                 <Card className={classes.card} align='center'>
                     <Typography variant='h4' color='primary'>
@@ -160,6 +193,65 @@ export default function Book() {
                 </TableBody>
             </Table>
         </TableContainer>
+
+        <Dialog open={open} onClose={closeDialog} maxWidth="xs" fullWidth align='center'>
+            <DialogTitle>Editar Libro</DialogTitle>
+            <DialogContent>
+                <form className={classes.form} onSubmit={(e)=>e.preventDefault()}>
+                    <Grid container spacing={2}>
+                        <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <TextField 
+                                select
+                                label='Categoria' 
+                                variant='outlined' 
+                                fullWidth 
+                                align='left'
+                                name='categoryEdit' 
+                                value={bookEdit.categoryEdit}
+                                onChange={handleChangeEdit}
+                            >
+                                <MenuItem disabled selected > -- Seleccione una categoria -- </MenuItem>
+                                <MenuItem value='Programacion' >Programacion</MenuItem>
+                                <MenuItem value='Historia' >Historia</MenuItem>
+                                <MenuItem value='Matematica' >Matematica</MenuItem>
+                            </TextField>
+                        </Grid>
+                        <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <TextField 
+                                label='Titulo' 
+                                variant='outlined' 
+                                fullWidth 
+                                name='titleEdit' 
+                                value={bookEdit.titleEdit}
+                                onChange={handleChangeEdit}
+                            />
+                        </Grid>
+                        <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <TextField 
+                                label='Autor' 
+                                variant='outlined' 
+                                fullWidth 
+                                name='authorEdit' 
+                                value={bookEdit.authorEdit}
+                                onChange={handleChangeEdit}
+                            />
+                        </Grid>
+                        <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <Button 
+                                variant='contained'
+                                fullWidth
+                                color='primary'
+                                type='submit'
+                                onClick={editBook}
+                                className={classes.gridmb}
+                                >
+                                Guardar
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </form>
+            </DialogContent>
+        </Dialog>
 
     </Container>
   )
