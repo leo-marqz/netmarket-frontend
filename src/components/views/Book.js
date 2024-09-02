@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useStyles from '../../theme/useStyles'
 import { Button, Card, Container, Dialog, DialogContent, DialogTitle, Grid, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
+import { addBook, deleteBookById, getAllBooks, getBookById, updateBook } from '../data/library';
+
 
 const cleanBook = {
+    id: '',
     category: '',
     title: '',
     author: ''
 }
 
 const cleanBookEdit = {
+    idEdit: '',
     categoryEdit: '',
     titleEdit: '',
     authorEdit: ''
@@ -18,11 +22,13 @@ export default function Book() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [book, setBook] = useState({
+        id: '',
         category: '',
         title: '',
         author: ''
     });
     const [bookEdit, setBookEdit] = useState({
+        idEdit: '',
         categoryEdit: '',
         titleEdit: '',
         authorEdit: ''
@@ -44,22 +50,42 @@ export default function Book() {
         }));
     }
 
-    const saveBook = (e) => {
-        e.preventDefault();
-        console.log('Guardando libro', book);
+    const saveBook = () => {
+        addBook(book);
         setBook(cleanBook);
     }
 
-    const editBook = (e)=>{
-        e.preventDefault();
-        console.log('Editando libro', bookEdit);
+    const [listBooks, setListBooks] = useState([]);
+    const loadListBooks = ()=>{
+        const data = getAllBooks();
+        console.log(data);
+        setListBooks(data);
+    }
+    useEffect(()=>{ loadListBooks(); }, [listBooks.length]);
+
+    const editBook = (book)=>{
+        const data = updateBook(book);
         setBookEdit(cleanBookEdit);
         closeDialog();
     }
 
-    const openDialog = () => {
-        console.log('Abriendo dialogo');
+    const deleteBook = (id) => {
+        if(window.confirm('¿Está seguro de eliminar el libro?')){
+            let newData = deleteBookById(id);
+            setListBooks(newData);
+        }
+    }
+
+    const openDialog = (id) => {
         setOpen(true);
+        const dataBook = getBookById(id);
+        setBookEdit({
+            idEdit: dataBook.id,
+            categoryEdit: dataBook.category,
+            titleEdit: dataBook.title,
+            authorEdit: dataBook.author
+        });
+        console.log('Abriendo dialogo: +', id);
     }
 
     const closeDialog = () => {
@@ -67,9 +93,7 @@ export default function Book() {
         setOpen(false);
     }
 
-    const deleteBook = () => {
-        console.log('Eliminando libro');
-    }
+    
 
   return (
     <Container className={classes.container}>
@@ -98,7 +122,7 @@ export default function Book() {
                                     <MenuItem value='Matematica' >Matematica</MenuItem>
                                 </TextField>
                             </Grid>
-                            <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <Grid item md={6} xs={12} className={classes.gridmb}>
                                 <TextField 
                                     label='Titulo' 
                                     variant='outlined' 
@@ -108,7 +132,7 @@ export default function Book() {
                                     onChange={handleChange}
                                 />
                             </Grid>
-                            <Grid item md={12} xs={12} className={classes.gridmb}>
+                            <Grid item md={6} xs={12} className={classes.gridmb}>
                                 <TextField 
                                     label='Autor' 
                                     variant='outlined' 
@@ -146,50 +170,31 @@ export default function Book() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    <TableRow>
-                        <TableCell>Programacion</TableCell>
-                        <TableCell>React</TableCell>
-                        <TableCell>Desconocido</TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='primary' onClick={openDialog}>
-                                Editar
-                            </Button>
-                        </TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='secondary' onClick={deleteBook}>
-                                Eliminar
-                            </Button>
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Historia</TableCell>
-                        <TableCell>La segunda guerra mundial</TableCell>
-                        <TableCell>Desconocido</TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='primary' onClick={openDialog}>
-                                Editar
-                            </Button>
-                        </TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='secondary' onClick={deleteBook}>
-                                Eliminar
-                            </Button>
-                        </TableCell>
-                    </TableRow>
-                    <TableRow></TableRow>
-                        <TableCell>Matematica</TableCell>
-                        <TableCell>Calculo</TableCell>
-                        <TableCell>Desconocido</TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='primary' onClick={openDialog}>
-                                Editar
-                            </Button>
-                        </TableCell>
-                        <TableCell>
-                            <Button variant='contained' color='secondary' onClick={deleteBook}>
-                                Eliminar
-                            </Button>
-                        </TableCell>
+                    {listBooks.map((itemBook)=>(
+                        <TableRow key={itemBook.id}>
+                            <TableCell>{itemBook.category}</TableCell>
+                            <TableCell>{itemBook.title}</TableCell>
+                            <TableCell>{itemBook.author}</TableCell>
+                            <TableCell>
+                                <Button 
+                                    variant='contained' 
+                                    color='primary' 
+                                    onClick={()=>{openDialog(itemBook.id)}}
+                                >
+                                    Editar
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button 
+                                    variant='contained' 
+                                    color='secondary' 
+                                    onClick={()=>deleteBook(itemBook.id)}
+                                >
+                                    Eliminar
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         </TableContainer>
@@ -242,7 +247,7 @@ export default function Book() {
                                 fullWidth
                                 color='primary'
                                 type='submit'
-                                onClick={editBook}
+                                onClick={()=>editBook(bookEdit)}
                                 className={classes.gridmb}
                                 >
                                 Guardar
